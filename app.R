@@ -7,10 +7,10 @@ library(tidyverse)
 library(plotly)
 library(ggplot2)
 
-source("load_dat.R")
+source("working_loadat.R")
 source("variant_time.R")
 source("seqs_metrics.R")
-source("region_data.R")
+#source("region_data.R")
 
 
 
@@ -40,14 +40,18 @@ ui <- dashboardPage(
                 tabPanel("All Virginia Data",
                   fluidRow(
                     column(width = 12, plotlyOutput("allvtimeplot"))),
-                    selectInput("time", label = h5("Select Time Period"),
+                    column(width = 3,selectInput("time", label = h5("Select Time Period"),
                                 choices = c("Weekly", "Monthly", "Quarterly"))),
+                    column(width = 3,selectInput("vars", label = h5("Select Data Type"),
+                                choices = c("WHO Variant", "Pango Lineage")))),
 
                 tabPanel("DCLS Data",
                          fluidRow(
                            column(width = 12, plotlyOutput("dclstimeplot"))),
-                           selectInput("time2", label = h5("Select Time Period"),
-                                       choices = c("Weekly", "Monthly", "Quarterly")))
+                           column(width = 3, selectInput("time2", label = h5("Select Time Period"),
+                                       choices = c("Weekly", "Monthly", "Quarterly"))),
+                           column(width = 3, selectInput("vars2", label = h5("Select Data Type"),
+                                                         choices = c("WHO Variant", "Pango Lineage"))))
 
               )),
               
@@ -95,9 +99,12 @@ ui <- dashboardPage(
 server <- function(input,output){ 
 ##Variants Panel##
   alltimeplot = reactive({
-    if ("Weekly" %in% input$time) return(g_weekfig)
-    if ("Monthly" %in% input$time) return(g_monthfig)
-    if ("Quarterly" %in% input$time) return(g_quartfig)
+    if ("Weekly" %in% input$time && "Pango Lineage" %in% input$vars) return(g_weekfig_lin)
+    if ("Monthly" %in% input$time && "Pango Lineage" %in% input$vars) return(g_monthfig_lin)
+    if ("Quarterly" %in% input$time && "Pango Lineage" %in% input$vars) return(g_quartfig_lin)
+    if ("Weekly" %in% input$time && "WHO Variant" %in% input$vars) return(g_weekfig_var)
+    if ("Monthly" %in% input$time && "WHO Variant" %in% input$vars) return(g_monthfig_var)
+    if ("Quarterly" %in% input$time && "WHO Variant" %in% input$vars) return(g_quartfig_var)
   })
   output$allvtimeplot <- renderPlotly({
     dataplots = alltimeplot()
@@ -106,10 +113,12 @@ server <- function(input,output){
   
   
   dclstimeplot = reactive({
-    if ("Weekly" %in% input$time2) return(d_weekfig)
-    if ("Monthly" %in% input$time2) return (d_monthfig)
-    if ("Quarterly" %in% input$time2) return (d_quartfig)
-    
+    if ("Weekly" %in% input$time2 && "Pango Lineage" %in% input$vars2) return(d_weekfig_lin)
+    if ("Monthly" %in% input$time2 && "Pango Lineage" %in% input$vars2) return (d_monthfig_lin)
+    if ("Quarterly" %in% input$time2 && "Pango Lineage" %in% input$vars2) return (d_quartfig_lin)
+    if ("Weekly" %in% input$time2 && "WHO Variant" %in% input$vars2) return(d_weekfig_var)
+    if ("Monthly" %in% input$time2 && "WHO Variant" %in% input$vars2) return(d_monthfig_var)
+    if ("Quarterly" %in% input$time2 && "WHO Variant" %in% input$vars2) return(d_quartfig_var)
   })
   output$dclstimeplot = renderPlotly({
     dataplots2 = dclstimeplot()
@@ -150,14 +159,14 @@ server <- function(input,output){
   })
   ##### Region graphs
   
-  region = reactive({
-    if("Health District" %in% input$region) return (dis_fig)
-    if("Health Region" %in% input$region) return(reg_fig)
-  })
-  output$regs = renderPlotly({
-    regplot1 = region()
-    print(regplot1)
-  })
+  # region = reactive({
+  #   if("Health District" %in% input$region) return (dis_fig)
+  #   if("Health Region" %in% input$region) return(reg_fig)
+  # })
+  # output$regs = renderPlotly({
+  #   regplot1 = region()
+  #   print(regplot1)
+  # })
   
   
   
