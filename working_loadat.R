@@ -42,7 +42,7 @@ all_gdata = raw_g_data %>%
 ####################################################################################################################
 ## Establish some static lineage information ##
 
-#grab all of the possible AY bastards for each tibble
+#grab all of the possible AYs for each tibble
 
 all_gay = all_gdata[grepl("AY", all_gdata$lineage_PANGO_lineage),]
 all_gay = all_gay[-2]
